@@ -10,6 +10,8 @@ class Graph:
         self.nodes[vertex.id] = vertex
 
     def jsonToGraph(self, filepath):
+        """Converts a JSON file into a graph"""
+
         #  get json -> dictionary
         with open(filepath) as f:
             schedule = json.load(f)
@@ -25,6 +27,13 @@ class Graph:
                     self.nodes.get(prereq))
 
     def numPreReqs(self, courseName):
+        """Gets the number of prereqs for a given course name"""
+        prereqs = self.listPrereqs(courseName)
+        return len(prereqs)
+
+    def listPrereqs(self, courseName):
+        """Lists prereqs for a course in the order they should be taken"""
+
         # get the course
         course = self.nodes.get(courseName)
         prereqs = []
@@ -42,10 +51,13 @@ class Graph:
 
             prereqs.append(prereq)
 
-            nestedPrereq = self.numPreReqs(prereq)
+            nestedPrereq = self.listPrereqs(prereq)
             if nestedPrereq is not None:
                 for course in nestedPrereq:
                     prereqs.append(course)
 
+        prereqs.reverse()
         prereqs = list(dict.fromkeys(prereqs))
+        prereqs.reverse()
+
         return prereqs
